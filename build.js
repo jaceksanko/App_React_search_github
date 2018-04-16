@@ -9,130 +9,150 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var App = function (_React$Component) {
-  _inherits(App, _React$Component);
+    _inherits(App, _React$Component);
 
-  function App() {
-    _classCallCheck(this, App);
+    function App() {
+        _classCallCheck(this, App);
 
-    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
 
-    _this.state = {
-      searchText: '',
-      users: []
-    };
-    return _this;
-  }
-
-  _createClass(App, [{
-    key: "onChangeHandle",
-    value: function onChangeHandle(event) {
-      this.setState({ searchText: event.target.value });
+        _this.state = {
+            searchText: '',
+            users: [],
+            isLoading: false
+        };
+        return _this;
     }
-  }, {
-    key: "onSubmit",
-    value: function onSubmit(event) {
-      var _this2 = this;
 
-      event.preventDefault();
-      var searchText = this.state.searchText;
+    _createClass(App, [{
+        key: "onChangeHandle",
+        value: function onChangeHandle(event) {
+            this.setState({ searchText: event.target.value });
+        }
+    }, {
+        key: "onSubmit",
+        value: function onSubmit(event) {
+            var _this2 = this;
 
-      var url = "https://api.github.com/search/users?q=" + searchText;
-      fetch(url).then(function (response) {
-        return response.json();
-      }).then(function (responseJson) {
-        return _this2.setState({ users: responseJson.items });
-      });
-    }
-  }, {
-    key: "render",
-    value: function render() {
-      var _this3 = this;
+            this.setState({ isLoading: true });
+            event.preventDefault();
 
-      return React.createElement(
-        "div",
-        null,
-        React.createElement(
-          "form",
-          { onSubmit: function onSubmit(event) {
-              return _this3.onSubmit(event);
-            } },
-          React.createElement(
-            "label",
-            { htmlFor: "searchText" },
-            "Search by user name"
-          ),
-          React.createElement("input", {
-            type: "text",
-            id: "searchText",
-            onChange: function onChange(event) {
-              return _this3.onChangeHandle(event);
-            },
-            value: this.state.searchText })
-        ),
-        React.createElement(UsersList, { users: this.state.users })
-      );
-    }
-  }]);
+            var searchText = this.state.searchText;
 
-  return App;
+            var url = "https://api.github.com/search/users?q=" + searchText;
+            fetch(url).then(function (response) {
+                return response.json();
+            }).then(function (responseJson) {
+                return _this2.setState({ users: responseJson.items, isLoading: false });
+            });
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            var isLoading = this.state.isLoading;
+
+            var content = void 0;
+            var form = React.createElement(
+                "form",
+                { onSubmit: function onSubmit(event) {
+                        return _this3.onSubmit(event);
+                    } },
+                React.createElement(
+                    "label",
+                    { htmlFor: "searchText" },
+                    "Search by user name"
+                ),
+                React.createElement("input", {
+                    type: "text",
+                    id: "searchText",
+                    onChange: function onChange(event) {
+                        return _this3.onChangeHandle(event);
+                    },
+                    value: this.state.searchText })
+            );
+            if (isLoading) {
+                content = React.createElement(
+                    "div",
+                    null,
+                    form,
+                    React.createElement("img", { src: "https://ebarnette15.files.wordpress.com/2013/03/loading-3.gif" })
+                );
+                return content;
+            } else {
+                content = React.createElement(
+                    "div",
+                    null,
+                    form,
+                    React.createElement(UsersList, { users: this.state.users, loading: isLoading })
+                );
+                return content;
+            }
+
+            return { content: content };
+        }
+    }]);
+
+    return App;
 }(React.Component);
 
 var UsersList = function (_React$Component2) {
-  _inherits(UsersList, _React$Component2);
+    _inherits(UsersList, _React$Component2);
 
-  function UsersList() {
-    _classCallCheck(this, UsersList);
+    function UsersList() {
+        _classCallCheck(this, UsersList);
 
-    return _possibleConstructorReturn(this, (UsersList.__proto__ || Object.getPrototypeOf(UsersList)).apply(this, arguments));
-  }
-
-  _createClass(UsersList, [{
-    key: "render",
-    value: function render() {
-      return React.createElement(
-        "div",
-        { className: "users" },
-        this.users
-      );
+        return _possibleConstructorReturn(this, (UsersList.__proto__ || Object.getPrototypeOf(UsersList)).apply(this, arguments));
     }
-  }, {
-    key: "users",
-    get: function get() {
-      return this.props.users.map(function (user) {
-        return React.createElement(User, { key: user.id, user: user });
-      });
-    }
-  }]);
 
-  return UsersList;
+    _createClass(UsersList, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                { className: "users" },
+                this.users
+            );
+        }
+    }, {
+        key: "users",
+        get: function get() {
+            return this.props.users.map(function (user) {
+                return React.createElement(User, { key: user.id, user: user });
+            });
+        }
+    }]);
+
+    return UsersList;
 }(React.Component);
 
 var User = function (_React$Component3) {
-  _inherits(User, _React$Component3);
+    _inherits(User, _React$Component3);
 
-  function User() {
-    _classCallCheck(this, User);
+    function User() {
+        _classCallCheck(this, User);
 
-    return _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).apply(this, arguments));
-  }
-
-  _createClass(User, [{
-    key: "render",
-    value: function render() {
-      return React.createElement(
-        "div",
-        null,
-        React.createElement("img", { src: this.props.user.avatar_url, style: { maxWidth: '100px' } }),
-        React.createElement(
-          "a",
-          { href: this.props.user.html_url, target: "_blank" },
-          this.props.user.login
-        )
-      );
+        return _possibleConstructorReturn(this, (User.__proto__ || Object.getPrototypeOf(User)).apply(this, arguments));
     }
-  }]);
 
-  return User;
+    _createClass(User, [{
+        key: "render",
+        value: function render() {
+            return React.createElement(
+                "div",
+                null,
+                React.createElement("img", { src: this.props.user.avatar_url, style: { maxWidth: '100px' } }),
+                React.createElement(
+                    "a",
+                    { href: this.props.user.html_url, target: "_blank" },
+                    this.props.user.login
+                )
+            );
+        }
+    }]);
+
+    return User;
 }(React.Component);
 
 ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
